@@ -1,0 +1,1 @@
+/home/qs/p5800/qemu/pc-bios/skiboot.lid

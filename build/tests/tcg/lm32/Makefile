@@ -1,0 +1,1 @@
+/home/qs/p5800/qemu/tests/tcg/lm32/Makefile

@@ -1,0 +1,21 @@
+{
+    "files.associations": {
+        "*.list": "c",
+        "resource.h": "c",
+        "array": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "utility": "c",
+        "fuse_virtio.h": "c",
+        "fuse_i.h": "c",
+        "fuse.h": "c",
+        "fuse_lowlevel.h": "c",
+        "fuse_kernel.h": "c",
+        "*.tcc": "c",
+        "seccomp.h": "c",
+        "types.h": "c",
+        "unistd.h": "c",
+        "unistd_64.h": "c",
+        "elf.h": "c"
+    }
+}
