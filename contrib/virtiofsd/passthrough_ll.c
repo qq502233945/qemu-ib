@@ -542,13 +542,14 @@ static int lo_fi_fd(fuse_req_t req, struct fuse_file_info *fi)
 
 	return elem->fd;
 }
-char* find_path_by_ino(char* path, ino_t ino) 
+char* find_path_by_ino_2(char* path, ino_t ino) 
 {
     DIR* dp;
     struct dirent* dirp;
     char* sub_path = NULL;
     char* child_path = NULL;
     char* file_path = NULL;
+	char* final_path = NULL;
 	errno = 0;
     if((dp = opendir(path)) == NULL) {
 		switch (errno) {
@@ -569,7 +570,7 @@ char* find_path_by_ino(char* path, ino_t ino)
         if(dirp->d_type == DT_DIR &&strcmp(dirp->d_name, ".") != 0 && strcmp(dirp->d_name, "..") != 0) {
             child_path = (char*)malloc(strlen(path) + strlen(dirp->d_name) + 3);
             sprintf(child_path, "%s/%s", path, dirp->d_name);
-            sub_path = find_path_by_ino(child_path, ino);
+            sub_path = find_path_by_ino_2(child_path, ino);
             free(child_path);
             if(sub_path != NULL) {
                 file_path = (char*)malloc(strlen(sub_path) + strlen(dirp->d_name) + 2);
@@ -581,7 +582,9 @@ char* find_path_by_ino(char* path, ino_t ino)
     }
 
     closedir(dp);
-    return file_path;
+	final_path = (char*)malloc(strlen(path) + strlen(file_path));
+	sprintf(final_path, "%s/%s", path, file_path);
+    return final_path;
 }
 
 
@@ -1606,7 +1609,7 @@ static void lo_ebpfread(fuse_req_t req, fuse_ino_t ino, size_t size,
 		    off_t offset, struct fuse_file_info *fi)
 {
 
-	char* share_floder = "/";
+	char* share_floder = "/swap";
 	struct fuse_session *se;
 	struct fuse_chan *ch;
 	// VuVirtq *q;
@@ -1619,7 +1622,8 @@ static void lo_ebpfread(fuse_req_t req, fuse_ino_t ino, size_t size,
     memset(scratch, 0, 0x1000);
 
 	// read the req info froem swap file
-	char* swap_path = find_path_by_ino(share_floder, req->swap_ino);
+	char* swap_path = find_path_by_ino_2(share_floder, req->swap_ino);
+
 	int swap_fd = open(swap_path, O_RDWR); 
 	if (swap_fd == -1) {
         printf("Failed to open file.\n");
